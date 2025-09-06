@@ -1,64 +1,29 @@
 #include <string>
 #include <vector>
-#include <iostream>
-#include <climits>
+#include <algorithm>
+#include <numeric>
 using namespace std;
 
 int solution(vector<int> queue1, vector<int> queue2) {
-    int answer = INT_MAX;
-    int len1=queue1.size(), len2=queue2.size();
-    vector<int> q;
-    long long target=0;
-    for(int i:queue1){
-        target+=i;
-        q.push_back(i);
+    int answer = 0;
+    long long sum1 = accumulate(queue1.begin(), queue1.end(), 0ll);
+    long long sum2 = accumulate(queue2.begin(), queue2.end(), 0ll);
+    int idx1 = 0, idx2 = 0;
+    int MAX = queue1.size()*2 + queue2.size()*2;
+    while (sum1 != sum2) {
+        answer++;
+        if (answer > MAX)
+            return -1;
+        if (sum1 < sum2) {
+            sum1 += queue2[idx2];
+            queue1.push_back(queue2[idx2]);
+            sum2 -= queue2[idx2++];
+        }
+        else {
+            sum2 += queue1[idx1];
+            queue2.push_back(queue1[idx1]);
+            sum1 -= queue1[idx1++];
+        }
     }
-    for(int i:queue2){
-        target+=i;
-        q.push_back(i);
-    }
-    target/=2;
-    int lo=0, hi=0;
-    long long val=q[0];
-    
-    while(lo<=hi && hi<len1+len2){
-        //cout<<lo<<' '<<hi<<' '<<val<<'\n';
-        
-        if(target==val){
-            int cnt=0;
-            if(hi>=len1){
-                if(lo>=len1){ //lo, hi가 queue2
-                    cnt+=(hi+1);
-                    cnt+=lo-len1;
-                }else{ //hi는 queue2, lo는 queue1
-                    cnt+=lo;
-                    cnt+=(hi-len1+1);
-                }
-            }else{ //hi가 queue1, lo도 queue1
-                if(hi==len1-1){
-                    cnt+=lo;
-                }else{
-                    cnt+=len2;
-                    cnt+=(hi-lo+1);    
-                }
-                
-            }
-            //cout<<cnt<<'\n';
-            answer=min(cnt, answer);
-            val-=q[lo];
-            lo++;
-            hi++;
-            if(hi==len1+len2) break;
-            val+=q[hi];
-        }else if(target>val){
-            hi++;
-            if(hi==len1+len2) break;
-            val+=q[hi]; 
-        }else{
-            val-=q[lo];
-            lo++;
-        }   
-    }
-    if(answer==INT_MAX) answer=-1;
     return answer;
 }
