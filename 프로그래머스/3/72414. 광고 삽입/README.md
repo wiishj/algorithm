@@ -1,10 +1,10 @@
 # [level 3] 광고 삽입 - 72414 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/72414) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/72414#) 
 
 ### 성능 요약
 
-메모리: 54.5 MB, 시간: 110.47 ms
+메모리: 53.3 MB, 시간: 122.94 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2025년 10월 09일 00:17:56
+2025년 10월 09일 13:48:53
 
 ### 문제 설명
 
