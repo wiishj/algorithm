@@ -1,31 +1,71 @@
+#include <string>
 #include <vector>
-#include <unordered_map>
+#include <queue>
+ 
 using namespace std;
-
+ 
+vector<int> m[1000001];
+bool visited[1000001];
+ 
+int check(int num, int size, int cur){
+    if(num%2 == size%2) {
+        if(cur==2)
+        {
+            return -1;
+        }
+        return 1;
+    }
+    else if(num%2 != size%2) {
+        if(cur==1)
+        {
+            return -1;
+        }
+        return 2;
+    }
+}
+ 
+int bfs(int r){
+    queue<int> q;
+    q.push(r);
+    visited[r]=true;
+    int checkNode = 0;
+    checkNode = check(r, m[r].size(), checkNode);
+    
+    while(!q.empty())
+    {
+        int nxt = q.front();
+        q.pop();
+        
+        for(int mm : m[nxt])
+        {
+            if(!visited[mm])
+            {
+                q.push(mm);
+                visited[mm]=true;
+                checkNode = check(mm, m[mm].size()-1, checkNode);
+                if(checkNode==-1) return -1;
+            }
+        }
+    }
+    
+    return checkNode;
+}
+ 
 vector<int> solution(vector<int> nodes, vector<vector<int>> edges) {
-    int n = nodes.size(), A = 0, B = 0;
-    unordered_map<int,int> id; 
-    id.reserve(n*2);
-    for(int i = 0; i < n; i++) id[nodes[i]] = i;
-
-    vector<int> p(n), deg(n), cnt(n), same(n);
-    for(int i = 0; i < n; i++) p[i] = i;
-    auto f = [&](int x) { while(p[x] != x) { p[x] = p[p[x]]; x = p[x]; }  return x; };
-
-    for(auto &e: edges) {
-        int a = id[e[0]], b = id[e[1]];
-        int ra = f(a), rb = f(b); 
-        if(ra != rb) p[ra] = rb;
-        deg[a] ^= 1; deg[b] ^= 1;                  
+    vector<int> answer = {0,0};
+    
+    for(auto edge : edges)
+    {
+        m[edge[0]].push_back(edge[1]);
+        m[edge[1]].push_back(edge[0]);
     }
-    for(int i = 0; i < n; i++) {
-        int r = f(i);
-        cnt[r]++; 
-        same[r] += (deg[i] == (nodes[i]&1));
+    
+    for(int root : nodes)
+    {
+        int idx = bfs(root);
+        if(idx != -1) answer[idx-1]++;
+        fill(visited, visited+1000001, false);
     }
-    for(int i = 0; i < n; i++) if(p[i] == i) {
-        if(same[i] == 1) A++;
-        if(same[i] == cnt[i]-1) B++;
-    }
-    return {A, B};
+    
+    return answer;
 }
